@@ -171,7 +171,17 @@ int main (int argc, char **argv)
   }
   printf("Done!\n");
 
-  // TODO clean-up
+  // Liberar memoria
+  cudaFree(d_Cos);
+  cudaFree(d_Sin);
+
+  free(pcCos);
+  free(pcSin);
+
+  free(h_hough);
+
+  cudaFree(d_hough);
+  cudaFree(d_in);
 
   return 0;
 }
