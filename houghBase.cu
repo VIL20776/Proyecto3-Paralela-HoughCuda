@@ -186,16 +186,28 @@ int main (int argc, char **argv)
       printf ("Calculation mismatch at : %i %i %i\n", i, cpuht[i], h_hough[i]);
   }
 
-  printf("Done! Tiempo de llamada al kernel: %f\n", miliseconds);
+  printf("Done! Tiempo de llamada al kernel: %f milisegundos\n", miliseconds);
 
   // Llena un nuevo array con los pixeles que forman las lineas encontradas
   Color pixels[w * h];
 
-  // Threshold arbitrario para considerar una línea encontrada
-  int threshold = 4000;
+  // Calcula promedio y varianza para determinar el threshold
+  float avg = 0;
+  for (i = 0; i < degreeBins * rBins; i++)
+    avg += h_hough[i];
+  
+  avg /= degreeBins * rBins;
+
+  float var = 0;
+  for (i = 0; i < degreeBins * rBins; i++)
+    var += (h_hough[i] - avg) * (h_hough[i] - avg);
+
+  var /= degreeBins * rBins;
+
+  int threshold = (int) avg + 2*sqrt(var);
 
   // Inicializa la imagen BMP con los colores de la imagen PGM
-  for (int i = 0; i < w * h; i++) {
+  for (i = 0; i < w * h; i++) {
     if (inImg.pixels[i] > 5) {
       pixels[(w * h) - i - 1] = {255, 255, 255}; // Blanco
     } else {
