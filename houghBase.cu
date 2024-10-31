@@ -14,6 +14,7 @@
 #include <cuda.h>
 #include <string.h>
 #include "common/pgm.h"
+#include "common/bmp.h"
 
 const int degreeInc = 2;
 const int degreeBins = 180 / degreeInc;
@@ -186,6 +187,50 @@ int main (int argc, char **argv)
   }
 
   printf("Done! Tiempo de llamada al kernel: %f\n", miliseconds);
+
+  // Llena un nuevo array con los pixeles que forman las lineas encontradas
+  Color pixels[w * h];
+
+  // Threshold arbitrario para considerar una línea encontrada
+  int threshold = 4000;
+
+  // Inicializa la imagen BMP con los colores de la imagen PGM
+  for (int i = 0; i < w * h; i++) {
+    if (inImg.pixels[i] > 5) {
+      pixels[(w * h) - i - 1] = {255, 255, 255}; // Blanco
+    } else {
+      pixels[(w * h) - i - 1] = {0, 0, 0}; // Negro
+    }
+  }
+
+  // Dibuja las líneas encontradas en la imagen BMP
+  for (int rIdx = 0; rIdx < rBins; rIdx++) {
+    for (int tIdx = 0; tIdx < degreeBins; tIdx++) {
+      if (h_hough[rIdx * degreeBins + tIdx] > threshold) {
+        float r = rIdx * rScale - rMax;
+        float cosTheta = pcCos[tIdx];
+        float sinTheta = pcSin[tIdx];
+
+        for (int x = 0; x < w; x++) {
+          int y = (r - (x - w / 2) * cosTheta) / sinTheta + h / 2;
+          if (y >= 0 && y < h) {
+            pixels[y * w + x] = {0, 255, 0}; // Rojo
+          }
+        }
+
+        for (int y = 0; y < h; y++) {
+          int x = (r - (y - h / 2) * sinTheta) / cosTheta + w / 2;
+          if (x >= 0 && x < w) {
+            pixels[y * w + x] = {0, 255, 0}; // Rojo
+          }
+        }
+      }
+    }
+  }
+
+  // Guarda la imagen BMP
+  BMPImage outImg(pixels, w, h);
+  outImg.save();
 
   // Liberar memoria
   cudaFree(d_Cos);
