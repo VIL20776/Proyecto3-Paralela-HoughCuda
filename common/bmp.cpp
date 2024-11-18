@@ -34,8 +34,8 @@ BMPImage::~BMPImage() {
     delete[] pixels;
 }
 
-void BMPImage::save() {
-    std::ofstream of("output.bmp", std::ios_base::binary);
+void BMPImage::save(const char* name) {
+    std::ofstream of(name, std::ios_base::binary);
     of.write((const char*) &header, sizeof(header));
     of.write((const char*) &info, sizeof(info));
     of.write((const char*) pixels, info.imageSize);

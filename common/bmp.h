@@ -40,6 +40,6 @@ public:
 BMPImage(Color* data, unsigned int width, unsigned int height);
 ~BMPImage();
 
-void save();
+void save(const char* name);
 
 };
