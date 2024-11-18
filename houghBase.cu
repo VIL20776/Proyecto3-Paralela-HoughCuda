@@ -226,14 +226,14 @@ int main (int argc, char **argv)
         for (int x = 0; x < w; x++) {
           int y = (r - (x - w / 2) * cosTheta) / sinTheta + h / 2;
           if (y >= 0 && y < h) {
-            pixels[y * w + x] = {0, 255, 0}; // Rojo
+            pixels[y * w + x] = {0, 255, 0}; // Verde
           }
         }
 
         for (int y = 0; y < h; y++) {
           int x = (r - (y - h / 2) * sinTheta) / cosTheta + w / 2;
           if (x >= 0 && x < w) {
-            pixels[y * w + x] = {0, 255, 0}; // Rojo
+            pixels[y * w + x] = {0, 255, 0}; // Verde
           }
         }
       }
@@ -242,7 +242,7 @@ int main (int argc, char **argv)
 
   // Guarda la imagen BMP
   BMPImage outImg(pixels, w, h);
-  outImg.save();
+  outImg.save("output.bmp");
 
   // Liberar memoria
   cudaFree(d_Cos);
