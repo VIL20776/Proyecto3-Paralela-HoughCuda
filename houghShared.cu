@@ -501,7 +501,7 @@ int Exec_Shared(PGMImage &inImg) {
   cudaEventCreate(&stop); 
 
   cudaEventRecord(start);
-  GPU_HoughTranConst <<< blockNum, 256 >>> (d_in, w, h, d_hough, rMax, rScale);
+  GPU_HoughTranShared <<< blockNum, 256 >>> (d_in, w, h, d_hough, rMax, rScale);
   cudaEventRecord(stop);
 
   // get results from device
